@@ -11,21 +11,28 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import os
+
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent ###
 
-
+environ.Env.read_env(os.path.join(BASE_DIR, '.env')) ###
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-9)#8n087@%s&9@k4sq8zb+qz&nq!o^m%f2f4i%$37tq8jq+o$4'
 
+SECRET_KEY = env('SECRET_KEY') ###
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
+
+AUTH_USER_MODEL = "games.CustomUser"
 
 
 # Application definition
@@ -40,6 +47,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'games',
+    'rest_framework.authtoken',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -73,6 +82,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'api.wsgi.application'
 
+REST_FRAMEWORK = { ###
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ), 
+}
+
+SIMPLE_JWT = { ###
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -85,7 +116,8 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': '127.0.0.1',
         'PORT': '5432',
-    }
+    },
+    "default": env.db("DATABASE_URL", default='postgres://postgres:postgres@127.0.0.1:5432/postgres') ###
 }
 
 
@@ -134,3 +166,8 @@ CORS_ALLOWED_ORIGINS_REGEXES = [
     r"^https://.*\.gitpod\.io$",
 ]
 CORS_ORIGIN_ALLOW_ALL = DEBUG
+
+CORS_ALLOWED_ORIGINS = [   ###
+    'http://localhost:8000',
+    'https://*.gitpod.io'
+]
