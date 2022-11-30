@@ -11,22 +11,19 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import environ
-import os
+from datetime import timedelta
 
-env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent ###
-
-environ.Env.read_env(os.path.join(BASE_DIR, '.env')) ###
+BASE_DIR = Path(__file__).resolve().parent.parent
+###
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-9)#8n087@%s&9@k4sq8zb+qz&nq!o^m%f2f4i%$37tq8jq+o$4'
 
-SECRET_KEY = env('SECRET_KEY') ###
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -49,6 +46,7 @@ INSTALLED_APPS = [
     'games',
     'rest_framework.authtoken',
     'django.contrib.sites',
+    
 ]
 
 MIDDLEWARE = [
@@ -99,11 +97,13 @@ SIMPLE_JWT = { ###
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': ('JWT',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -117,7 +117,6 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '5432',
     },
-    "default": env.db("DATABASE_URL", default='postgres://postgres:postgres@127.0.0.1:5432/postgres') ###
 }
 
 
