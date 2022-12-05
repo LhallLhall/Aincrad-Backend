@@ -21,7 +21,20 @@ from rest_framework import status, permissions
 # Create your views here.
 def curl_call(request):
     url = "https://dir84il2yk.execute-api.us-west-2.amazonaws.com/production/v4/games"
-    payload = "fields rating, cover.url ,id, name, genres.name, platforms.name, franchises.name, platforms.platform_logo.url, release_dates.human, summary; limit 500; where platforms != null; where release_dates != null; where rating > 98;"
+    payload = "fields rating, cover.url ,id, name, genres.name, platforms.name, franchises.name, platforms.platform_logo.url, release_dates.human, summary; limit 500; where platforms != null; sort rating desc;"
+    #  where rating != null; where genres != null; where release_dates != null; where platforms != null; where summary != null;
+    headers = {
+    'x-api-key': 'HEQsMFqOnt1zD2q1oLwo36jxVFeiavom57v2F0Ud',
+    'Client-ID': 'e4e2unaghoyw3t7zz80w1gteqidkaz',
+    'Authorization': 'Bearer ea7k5q6odr0g2osf71krx9dxxa1koi',
+    'Content-Type': 'application/json'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload).json()
+    return JsonResponse(response, safe=False)
+
+def search_curl_call(request, game):
+    url = "https://dir84il2yk.execute-api.us-west-2.amazonaws.com/production/v4/games/"
+    payload = f'search "{game}"; fields rating, cover.url ,id, name, genres.name, platforms.name, franchises.name, platforms.platform_logo.url, release_dates.human, summary, involved_companies.company.name, storyline; limit 21; where platforms != null; where genres != null; where release_dates != null;'
     #  where rating != null; where genres != null; where release_dates != null; where platforms != null; where summary != null;
     headers = {
     'x-api-key': 'HEQsMFqOnt1zD2q1oLwo36jxVFeiavom57v2F0Ud',
@@ -47,6 +60,11 @@ class CustomUserCreate(APIView):
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserDetail(generics.RetrieveAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
 
 class HelloWorldView(APIView):
 
