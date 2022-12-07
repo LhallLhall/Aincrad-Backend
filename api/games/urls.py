@@ -7,10 +7,14 @@ from .views import ObtainTokenPairWithColorView, CustomUserCreate, UserDetail, G
 
 router = routers.SimpleRouter()
 router.register(r'game', GameViewSet)
+# router.register(r'gameUser', GameUserViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),
     path('addGameToUser/<int:gameID>/', views.addGameToUser),
+    path('getUserGames', views.getUserGames),
+    # path('gameUser', GameUserViewSet.as_view()),
     path('api/', views.curl_call, name='game json'),
     path('search/<game>', views.search_curl_call, name='search'),
     path('user/create/', CustomUserCreate.as_view(), name="create_user"),

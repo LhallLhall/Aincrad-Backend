@@ -113,9 +113,18 @@ def addGameToUser(request, gameID):
     gameSerializer = GameSerializer(game)
     return Response(gameSerializer.data)
 
-# @api_view(['GET'])
-# def getUserGames(request, userId):
-#     # user = CustomUser.objects.get(id = userId)
-#     # games = Game.objects.filter(  = userId)
-#     serializer = GameSerializer(game)
-#     return Response(serializer.data)
+@api_view(['GET'])
+def getUserGames(request):
+    # user = CustomUser.objects.get(id = request.user.id)
+    games = GameUser.objects.filter(user_id = request.user.id)
+    # print(games)
+    game_list = []
+    for game in games:
+        # print(game.id)
+        this_game = Game.objects.get(id=game.id)
+        serializer = GameSerializer(this_game)
+        print(serializer.data)
+
+        game_list.append(serializer.data)
+    # return Response(serializer.data)
+    return Response(game_list)
