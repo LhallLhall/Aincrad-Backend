@@ -1,6 +1,6 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Game, GameUser
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     @classmethod
@@ -9,18 +9,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    """
-    Currently unused in preference of the below.
-    """
-    # email = serializers.EmailField(
-    #     required=True
-    # )
     username = serializers.CharField()
     password = serializers.CharField(min_length=3, write_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'password')
+        fields = '__all__'
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -30,3 +24,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+class GameSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Game
+        fields = '__all__'
+
+class GameUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GameUser
+        fields = '__all__'
