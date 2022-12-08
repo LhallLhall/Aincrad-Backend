@@ -85,7 +85,7 @@ class GameViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)
-    
+
     def create(self, request, *args, **kwargs):
         kwargs['partial'] = True
         try:
@@ -93,6 +93,7 @@ class GameViewSet(ModelViewSet):
             return super().retrieve(request)
         except Game.DoesNotExist:
             return super().create(request, *args, **kwargs)
+
 
 class GameUserViewSet(ModelViewSet):
     queryset = GameUser.objects.all()
@@ -108,7 +109,7 @@ def addGameToUser(request, gameID):
         user.games.add(game)
     
     if request.method == 'DELETE':
-        user.games.remove(game)
+        user.games.remove(game.id)
 
     gameSerializer = GameSerializer(game)
     return Response(gameSerializer.data)
@@ -120,11 +121,18 @@ def getUserGames(request):
     # print(games)
     game_list = []
     for game in games:
-        # print(game.id)
-        this_game = Game.objects.get(id=game.id)
-        serializer = GameSerializer(this_game)
-        print(serializer.data)
-
-        game_list.append(serializer.data)
-    # return Response(serializer.data)
+        # print(game.game_id)
+        try:
+            this_game = Game.objects.get(id = game.game_id)
+            serializer = GameSerializer(this_game)
+            # print(serializer.data)
+            game_list.append(serializer.data)
+        except:
+            # print("error")
+            return Response(serializer.data)
+    #print(game_list)
     return Response(game_list)
+
+    #? The error is coming from the query to the database to get a game by ID.
+    #? The ID that you were sending does not match a query
+    #? in the same way that we use an except in a different portion of your code to catch this error you’re not handling it here

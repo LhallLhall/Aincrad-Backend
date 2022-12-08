@@ -12,14 +12,12 @@ router.register(r'game', GameViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('addGameToUser/<int:gameID>/', views.addGameToUser),
-    path('getUserGames', views.getUserGames),
-    # path('gameUser', GameUserViewSet.as_view()),
+    path('addGameToUser/<int:gameID>/', views.addGameToUser), #makes the connection to the user and a game either saved in the database or created
+    path('getUserGames', views.getUserGames), #grabs all games to the user
     path('api/', views.curl_call, name='game json'),
-    path('search/<game>', views.search_curl_call, name='search'),
+    path('search/<game>', views.search_curl_call, name='search'), #return all items that are related to the inputed game
     path('user/create/', CustomUserCreate.as_view(), name="create_user"),
     path('token/obtain/', ObtainTokenPairWithColorView.as_view(), name='token_create'),  
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    # path('hello/', HelloWorldView.as_view(), name='hello_world'),
     path('users/<int:pk>', UserDetail.as_view(), name="get_user_details"),
 ]
