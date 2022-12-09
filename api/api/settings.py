@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'games',
     'rest_framework.authtoken',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
     
 ]
 
