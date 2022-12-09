@@ -15,6 +15,9 @@ urlpatterns = [
     path('addGameToUser/<int:gameID>/', views.addGameToUser), #makes the connection to the user and a game either saved in the database or created
     path('getUserGames', views.getUserGames), #grabs all games to the user
     path('api/', views.curl_call, name='game json'),
+    path('updateCompletion/<int:gameID>', views.updateCompletion),
+    path('updateGameHours/<int:gameID>', views.updateGameHours),
+    path('updateGameTimer/<int:gameID>', views.updateGameTimer),
     path('search/<game>', views.search_curl_call, name='search'), #return all items that are related to the inputed game
     path('user/create/', CustomUserCreate.as_view(), name="create_user"),
     path('token/obtain/', ObtainTokenPairWithColorView.as_view(), name='token_create'),  

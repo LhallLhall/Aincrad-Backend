@@ -19,12 +19,17 @@ class Game(models.Model):
     company = models.CharField(max_length=255, default="None")
     completed = models.BooleanField(default=False)
     storyline = models.TextField(max_length=2000, default="None")
-
-
+    cover = models.CharField(max_length=255, default="")
 class GameUser(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     hours_played = models.IntegerField(null=True)
+    completed = models.BooleanField(default=False)
+    timer_status = models.BooleanField(default=False)
+    timer_started = models.DateTimeField(null=True)
+    created_at = models.DateField(null=True, auto_now_add=True)
+    updated_at = models.DateField(null=True, auto_now=True)
+
 
     class Meta:
         unique_together = (

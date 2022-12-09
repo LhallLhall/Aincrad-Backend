@@ -6,3 +6,5 @@ class CustomUserAdmin(admin.ModelAdmin):
     model = CustomUser
 # Register your models here.
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Game)
+admin.site.register(GameUser)

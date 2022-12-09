@@ -35,7 +35,7 @@ def curl_call(request):
 
 def search_curl_call(request, game):
     url = "https://dir84il2yk.execute-api.us-west-2.amazonaws.com/production/v4/games/"
-    payload = f'search "{game}"; fields rating, cover.url ,id, name, genres.name, platforms.name, franchises.name, platforms.platform_logo.url, release_dates.human, summary, involved_companies.company.name, storyline; limit 21; where platforms != null; where genres != null; where release_dates != null;'
+    payload = f'search "{game}"; fields rating, artworks.height, artworks.width, artworks.url, cover.url ,id, name, genres.name, platforms.name, franchises.name, platforms.platform_logo.url, release_dates.human, summary, involved_companies.company.name, storyline; limit 21; where platforms != null; where genres != null; where release_dates != null;'
     #  where rating != null; where genres != null; where release_dates != null; where platforms != null; where summary != null;
     headers = {
     'x-api-key': 'HEQsMFqOnt1zD2q1oLwo36jxVFeiavom57v2F0Ud',
@@ -117,22 +117,88 @@ def addGameToUser(request, gameID):
 @api_view(['GET'])
 def getUserGames(request):
     # user = CustomUser.objects.get(id = request.user.id)
-    games = GameUser.objects.filter(user_id = request.user.id)
-    # print(games)
+    user_games = GameUser.objects.filter(user_id = request.user.id)
     game_list = []
-    for game in games:
+    for game in user_games:
         # print(game.game_id)
         try:
             this_game = Game.objects.get(id = game.game_id)
-            serializer = GameSerializer(this_game)
+            game_serializer = GameSerializer(this_game)
+            user_game_serializer = GameUserSerializer(game)
             # print(serializer.data)
-            game_list.append(serializer.data)
+            obj = {
+                "usergame": user_game_serializer.data,
+                "game": game_serializer.data
+            }
+            game_list.append(obj)
         except:
             # print("error")
-            return Response(serializer.data)
+            return Response("no can do")
     #print(game_list)
     return Response(game_list)
 
+@api_view(["PUT"])
+def updateCompletion(request, gameID):
+    completed = GameUser.objects.get(game_id = gameID, user_id = request.user.id)
+    print(request.data)
+    data = request.data
+
+    serializer = GameUserSerializer(instance=completed, data=data, partial=True)
+
+    serializer.is_valid(raise_exception=True)
+
+    serializer.save()
+
+    response = Response()
+
+    response.data = {
+        'message': 'Game completed status updated successfully',
+        'data': serializer.data,
+    }
+
+    return response
     #? The error is coming from the query to the database to get a game by ID.
     #? The ID that you were sending does not match a query
     #? in the same way that we use an except in a different portion of your code to catch this error you’re not handling it here
+
+@api_view(["PUT"])
+def updateGameHours(request, gameID):
+    game_to_update = GameUser.objects.get(game_id = gameID, user_id = request.user.id)
+   
+    data = request.data
+
+    serializer = GameUserSerializer(instance=game_to_update, data=data, partial=True)
+
+    serializer.is_valid(raise_exception=True)
+
+    serializer.save()
+
+    response = Response()
+
+    response.data = {
+        'message': 'Game tracking info updated successfully',
+        'data': serializer.data,
+    }
+
+    return response
+
+@api_view(["PUT"])
+def updateGameTimer(request, gameID):
+    game_to_update = GameUser.objects.get(game_id = gameID, user_id = request.user.id)
+   
+    data = request.data
+
+    serializer = GameUserSerializer(instance=game_to_update, data=data, partial=True)
+
+    serializer.is_valid(raise_exception=True)
+
+    serializer.save()
+
+    response = Response()
+
+    response.data = {
+        'message': 'Game timer info updated successfully',
+        'data': serializer.data,
+    }
+
+    return response
