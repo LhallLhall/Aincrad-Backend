@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "games.CustomUser"
 
+CSRF_TRUSTED_ORIGINS = ['https://*.gitpod.io']
 
 # Application definition
 

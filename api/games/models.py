@@ -18,8 +18,11 @@ class Game(models.Model):
     platform = models.CharField(max_length=255)
     company = models.CharField(max_length=255, default="None")
     completed = models.BooleanField(default=False)
-    storyline = models.TextField(max_length=2000, default="None")
+    storyline = models.TextField(max_length=200000, default="None")
     cover = models.CharField(max_length=255, default="")
+
+    def __str__(self):
+        return self.name
 class GameUser(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
